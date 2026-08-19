@@ -1,4 +1,4 @@
-# An Evaluation-Fragility Harness for LLM Benchmarks
+# EvalFrag
 
 EvalFrag is a production-oriented [Inspect AI](https://inspect.aisi.org.uk/) experiment for measuring how much a reasoning benchmark score moves when the **model and benchmark items stay fixed** but the evaluation method changes.
 
@@ -266,6 +266,29 @@ CI runs parser, configuration, dataset-integrity, statistics, schema, runner-con
 ## Security
 
 See `SECURITY.md`, `PRODUCTION_READINESS.md`, and `VERIFICATION.md`. In particular, keep Inspect logs private unless they have been reviewed, because logs contain prompts and model completions even when `records.jsonl` stores only hashes.
+
+## Debugging notes: getting a live run to actually work
+
+The design docs above describe intended behavior. This section documents three real, reproducible bugs found while getting an actual live run against `anthropic/claude-haiku-4-5-20251001` to complete end-to-end — kept here rather than scrubbed out, because in eval infrastructure the failure modes are usually more instructive than the happy path.
+
+**1. `temperature` and `top_p` sent together, rejected by Anthropic's API.**
+Every task built a `GenerateConfig` with both `temperature` and `top_p` set, regardless of provider. Anthropic's API returns a 400 for that combination — it wants exactly one of the two, even when `top_p` is the 1.0 no-op default:
+```
+BadRequestError: `temperature` and `top_p` cannot both be specified for this model.
+```
+This silently failed every single task in the grid on the first live attempt. Fix: `build_task()` now only includes `top_p` in the request when the model provider isn't `anthropic` (`tasks.py`), since temperature is the axis this harness actually varies.
+
+**2. `eval_set()` can return log objects with `status == "success"` but no sample data loaded in memory.**
+After fixing (1), a resumed run completed all 24 tasks successfully, yet aggregation still reported 5 conditions as missing from the result grid — `_records_from_logs()` saw an empty sample list for those logs. Directly re-reading the same `.eval` files from disk (`inspect_ai.log.read_eval_log`) showed the real data: correctly scored, zero errors. The in-memory `EvalLog` objects `eval_set()` returned simply didn't carry the full sample payload for those particular tasks, despite reporting success. Fix: both `runner.py` and `scripts/resume_run.py` now re-read every log fresh from disk via `read_eval_log()` immediately after `eval_set()` returns, rather than trusting the in-memory objects it hands back.
+
+**3. Floating-point rounding broke the CI-containment schema check.**
+Once real data reached aggregation, a `Cell` with `n=10, successes=10` (a perfect-accuracy cell — expected at small smoke-test sample sizes) failed validation:
+```
+ValidationError: cell interval must contain accuracy
+```
+`wilson_interval(10, 10, 0.95)` computed `ci_hi = 0.9999999999999999` instead of the algebraically-exact `1.0`, while `acc` was computed as a clean `1.0` via plain division — a rounding mismatch, not a real statistical problem (Wilson intervals are mathematically guaranteed to contain the point estimate). The second `Cell`-construction path, which uses a percentile bootstrap interval instead of Wilson, has no such guarantee at all, especially at small `n`. Fix: `aggregate.py` now clamps `ci_lo = min(ci_lo, acc)` and `ci_hi = max(ci_hi, acc)` at both construction sites, so the invariant holds by construction instead of by chance. See interpretation rule 7 above for the statistical detail.
+
+**Why this happened on the second and third bugs specifically:** both were invisible until an actual live model was in the loop. The synthetic stub never produces the exact API-rejected parameter combination a real provider enforces, and small-`n` floating-point edge cases only bite at the sample sizes worth using for a quick, cheap smoke test before committing to a full paid run — which is exactly the workflow that surfaced them.
 
 ## Container
 
