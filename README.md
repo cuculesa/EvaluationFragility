@@ -1,4 +1,4 @@
-# EvalFrag
+# An Evaluation-Fragility Harness for LLM Benchmarks
 
 EvalFrag is a production-oriented [Inspect AI](https://inspect.aisi.org.uk/) experiment for measuring how much a reasoning benchmark score moves when the **model and benchmark items stay fixed** but the evaluation method changes.
 
