@@ -1,0 +1,42 @@
+{
+  "run_id": "evalfrag-live-claude-20260818T224310738315-158a91b2",
+  "created_at": "2026-08-18T22:43:10.738642Z",
+  "config_sha256": "3deb0315f7f94bdb77992df3f453a50355c361d35777698618ce394bb55bfb26",
+  "git": {
+    "commit": null,
+    "dirty": false
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "machine": "arm64"
+  },
+  "dataset_manifest_sha256": "b3c62f5ebd705396007c259c409bc5ffe86dfe69c7421a4316ee7c9766774732",
+  "dataset_manifest": {
+    "schema_version": 1,
+    "created_at": "2026-08-18T22:11:53.867683Z",
+    "files": {
+      "gsm8k_test.jsonl": {
+        "url": "https://raw.githubusercontent.com/openai/grade-school-math/b0bb162/grade_school_math/data/test.jsonl",
+        "source": "openai/grade-school-math",
+        "license": "MIT",
+        "sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
+        "bytes": 749738
+      },
+      "bbh_date_understanding.json": {
+        "url": "https://raw.githubusercontent.com/suzgunmirac/BIG-Bench-Hard/9ee07bd/bbh/date_understanding.json",
+        "source": "suzgunmirac/BIG-Bench-Hard",
+        "license": "MIT",
+        "sha256": "0148d4ac5fca05b2f82373e5fef7208e15363b9c6079493034d77b3dab496bf5",
+        "bytes": 61760
+      },
+      "bbh_date_understanding_cot.txt": {
+        "url": "https://raw.githubusercontent.com/suzgunmirac/BIG-Bench-Hard/9ee07bd/cot-prompts/date_understanding.txt",
+        "source": "suzgunmirac/BIG-Bench-Hard",
+        "license": "MIT",
+        "sha256": "a0a13c392f689a1828f5f6ffb9dee3d44483794490da5d92f0e2a723787b1cfb",
+        "bytes": 1277
+      }
+    }
+  }
+}

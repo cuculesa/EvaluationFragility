@@ -1,0 +1,276 @@
+{
+  "$defs": {
+    "Cell": {
+      "additionalProperties": false,
+      "properties": {
+        "suite": {
+          "title": "Suite",
+          "type": "string"
+        },
+        "fmt": {
+          "title": "Fmt",
+          "type": "string"
+        },
+        "temp": {
+          "title": "Temp",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        },
+        "parser": {
+          "title": "Parser",
+          "type": "string"
+        },
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "unique_items": {
+          "title": "Unique Items",
+          "type": "integer"
+        },
+        "acc": {
+          "title": "Acc",
+          "type": "number"
+        },
+        "ci_lo": {
+          "title": "Ci Lo",
+          "type": "number"
+        },
+        "ci_hi": {
+          "title": "Ci Hi",
+          "type": "number"
+        },
+        "unparsed_rate": {
+          "title": "Unparsed Rate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "suite",
+        "fmt",
+        "temp",
+        "parser",
+        "n",
+        "unique_items",
+        "acc",
+        "ci_lo",
+        "ci_hi",
+        "unparsed_rate"
+      ],
+      "title": "Cell",
+      "type": "object"
+    },
+    "ConditionContrast": {
+      "additionalProperties": false,
+      "properties": {
+        "suite": {
+          "title": "Suite",
+          "type": "string"
+        },
+        "parser": {
+          "title": "Parser",
+          "type": "string"
+        },
+        "fmt_a": {
+          "title": "Fmt A",
+          "type": "string"
+        },
+        "temp_a": {
+          "title": "Temp A",
+          "type": "number"
+        },
+        "fmt_b": {
+          "title": "Fmt B",
+          "type": "string"
+        },
+        "temp_b": {
+          "title": "Temp B",
+          "type": "number"
+        },
+        "n_pairs": {
+          "title": "N Pairs",
+          "type": "integer"
+        },
+        "delta": {
+          "title": "Delta",
+          "type": "number"
+        },
+        "ci_lo": {
+          "title": "Ci Lo",
+          "type": "number"
+        },
+        "ci_hi": {
+          "title": "Ci Hi",
+          "type": "number"
+        },
+        "inference_scope": {
+          "title": "Inference Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suite",
+        "parser",
+        "fmt_a",
+        "temp_a",
+        "fmt_b",
+        "temp_b",
+        "n_pairs",
+        "delta",
+        "ci_lo",
+        "ci_hi",
+        "inference_scope"
+      ],
+      "title": "ConditionContrast",
+      "type": "object"
+    },
+    "ParserContrast": {
+      "additionalProperties": false,
+      "properties": {
+        "suite": {
+          "title": "Suite",
+          "type": "string"
+        },
+        "fmt": {
+          "title": "Fmt",
+          "type": "string"
+        },
+        "temp": {
+          "title": "Temp",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        },
+        "parser_a": {
+          "title": "Parser A",
+          "type": "string"
+        },
+        "parser_b": {
+          "title": "Parser B",
+          "type": "string"
+        },
+        "acc_a": {
+          "title": "Acc A",
+          "type": "number"
+        },
+        "acc_b": {
+          "title": "Acc B",
+          "type": "number"
+        },
+        "delta": {
+          "title": "Delta",
+          "type": "number"
+        },
+        "only_b": {
+          "title": "Only B",
+          "type": "integer"
+        },
+        "only_a": {
+          "title": "Only A",
+          "type": "integer"
+        },
+        "p_value": {
+          "title": "P Value",
+          "type": "number"
+        },
+        "q_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q Value"
+        }
+      },
+      "required": [
+        "suite",
+        "fmt",
+        "temp",
+        "parser_a",
+        "parser_b",
+        "acc_a",
+        "acc_b",
+        "delta",
+        "only_b",
+        "only_a",
+        "p_value"
+      ],
+      "title": "ParserContrast",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 2,
+      "default": 2,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "meta": {
+      "additionalProperties": true,
+      "title": "Meta",
+      "type": "object"
+    },
+    "cells": {
+      "items": {
+        "$ref": "#/$defs/Cell"
+      },
+      "title": "Cells",
+      "type": "array"
+    },
+    "parser_contrasts": {
+      "items": {
+        "$ref": "#/$defs/ParserContrast"
+      },
+      "title": "Parser Contrasts",
+      "type": "array"
+    },
+    "condition_contrasts": {
+      "items": {
+        "$ref": "#/$defs/ConditionContrast"
+      },
+      "title": "Condition Contrasts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "meta",
+    "cells",
+    "parser_contrasts"
+  ],
+  "title": "Results",
+  "type": "object"
+}

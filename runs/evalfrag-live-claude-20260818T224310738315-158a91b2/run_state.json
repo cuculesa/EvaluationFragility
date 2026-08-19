@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "run_id": "evalfrag-live-claude-20260818T224310738315-158a91b2",
+  "started_at": "2026-08-18T22:43:10.738642Z",
+  "failed_at": "2026-08-18T22:43:46.274562Z",
+  "error_type": "ValueError",
+  "message": "Evaluation run failed; inspect failures.json and Inspect logs."
+}

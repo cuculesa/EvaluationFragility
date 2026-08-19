@@ -1,0 +1,197 @@
+{
+  "eval_set_id": "BTrHHVUgem8vNNp4gRqHaU",
+  "tasks": [
+    {
+      "name": "evalfrag_gsm8k_bare_t0p0_s42",
+      "task_id": "5PcgxVRX2t6gmKb88cMuoS",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 0
+    },
+    {
+      "name": "evalfrag_gsm8k_bare_t0p7_s42",
+      "task_id": "iMejf8hJwVZuY5jnA954EM",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 1
+    },
+    {
+      "name": "evalfrag_gsm8k_bare_t1p0_s42",
+      "task_id": "ehtVEHALi3k8QwwsoLaUut",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 2
+    },
+    {
+      "name": "evalfrag_gsm8k_cot_zero_shot_t0p0_s42",
+      "task_id": "oRsa2iMKR3HLoJFGbLexrJ",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 3
+    },
+    {
+      "name": "evalfrag_gsm8k_cot_zero_shot_t0p7_s42",
+      "task_id": "e5gZFiwDsWeB2EC4hxZpcv",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 4
+    },
+    {
+      "name": "evalfrag_gsm8k_cot_zero_shot_t1p0_s42",
+      "task_id": "jXETJHafLJ3AwduGHXqF4i",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 5
+    },
+    {
+      "name": "evalfrag_gsm8k_cot_tagged_t0p0_s42",
+      "task_id": "JJd5nDhUtcV9FDV7eYYSGM",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 6
+    },
+    {
+      "name": "evalfrag_gsm8k_cot_tagged_t0p7_s42",
+      "task_id": "7qf32opQ7Z6LAaB8HcQaRR",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 7
+    },
+    {
+      "name": "evalfrag_gsm8k_cot_tagged_t1p0_s42",
+      "task_id": "dws5b74cuFB5Dew44RQLvZ",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 8
+    },
+    {
+      "name": "evalfrag_gsm8k_fewshot_tagged_t0p0_s42",
+      "task_id": "UgFHJPSbDRrWu3uX2MCtie",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 9
+    },
+    {
+      "name": "evalfrag_gsm8k_fewshot_tagged_t0p7_s42",
+      "task_id": "ZVbG5cmJaHCCWoVAnUeDN5",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 10
+    },
+    {
+      "name": "evalfrag_gsm8k_fewshot_tagged_t1p0_s42",
+      "task_id": "Y7JYmgQTPbaU689wtJWUX4",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 11
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_bare_t0p0_s42",
+      "task_id": "FApdia8w3H7SsUYHWbd8az",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 12
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_bare_t0p7_s42",
+      "task_id": "b7eSgkXjbTn2cVMhNdRZdS",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 13
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_bare_t1p0_s42",
+      "task_id": "kjVFtm8JmtZDfkytoHCb6M",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 14
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_cot_zero_shot_t0p0_s42",
+      "task_id": "YVmzy6FXHCnxvXRuJpoLgR",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 15
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_cot_zero_shot_t0p7_s42",
+      "task_id": "6LnjpAfGk8cUAhKzfTCfeZ",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 16
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_cot_zero_shot_t1p0_s42",
+      "task_id": "Y7eggYAPSLdaD5BCrEtPmK",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 17
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_cot_tagged_t0p0_s42",
+      "task_id": "WQt2nsveP5Ti8xH8srKmxw",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 18
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_cot_tagged_t0p7_s42",
+      "task_id": "7Lod6UKnj4z7hDGozHvers",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 19
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_cot_tagged_t1p0_s42",
+      "task_id": "Vn4z22Nqr2igFLK3pDTP9K",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 20
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_fewshot_tagged_t0p0_s42",
+      "task_id": "PG8fWk7TZKMeXKQyv3grY2",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 21
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_fewshot_tagged_t0p7_s42",
+      "task_id": "B4mmVeotWYwv7bjG9dCPvZ",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 22
+    },
+    {
+      "name": "evalfrag_bbh_date_understanding_fewshot_tagged_t1p0_s42",
+      "task_id": "cPRVeQhjeNCy4iGTqJFTHU",
+      "task_args": {},
+      "model": "anthropic/claude-haiku-4-5-20251001",
+      "model_args": {},
+      "sequence": 23
+    }
+  ]
+}

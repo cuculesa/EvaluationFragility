@@ -1,0 +1,45 @@
+[experiment]
+name = "evalfrag-live-claude-smoke"
+mode = "live"
+model = "anthropic/claude-haiku-4-5-20251001"
+
+model_args = {}
+model_revision = ""
+tokenizer_revision = ""
+serving_engine = ""
+serving_engine_version = ""
+quantization = ""
+chat_template_sha256 = ""
+suites = ["gsm8k", "bbh_date_understanding"]
+prompt_formats = ["bare", "cot_zero_shot", "cot_tagged", "fewshot_tagged"]
+temperatures = [0.0, 0.7, 1.0]
+
+seeds = [42]
+n = 10
+dataset_seed = 2026
+max_tokens = 512
+output_dir = "../runs"
+data_dir = "../data"
+allow_unseeded_provider = false
+store_completion_text = false
+
+[runtime]
+max_tasks = 4
+max_samples = 8
+max_connections = 16
+timeout_seconds = 180
+attempt_timeout_seconds = 120
+model_max_retries = 3
+sample_retry_on_error = 2
+eval_set_retry_attempts = 3
+fail_on_error = true
+checkpoint = true
+
+[statistics]
+confidence_level = 0.95
+bootstrap_resamples = 5000
+bootstrap_seed = 1729
+
+[dashboard]
+title = "Evaluation methodology sensitivity -- Claude Haiku 4.5"
+high_unparsed_threshold = 0.10

@@ -1,0 +1,2 @@
+[console_scripts]
+evalfrag = evalfrag.cli:main

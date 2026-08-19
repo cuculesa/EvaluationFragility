@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eval fragility · one model, many scores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF0F3; --ink:#12181F; --ink-2:#4A5561; --rule:#C6CDD6; --card:#FFFFFF;
+  --p1:#0B3D5C; --p2:#3C7EA6; --p3:#9FC8DF;   /* parser permissiveness ramp */
+  --warn:#C1741A;                              /* reserved: data loss only   */
+  --flag:#7A2E2E; --flag-bg:#F6E9E7;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.5}
+.mono{font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+.flag{background:var(--flag-bg);border-bottom:2px solid var(--flag);
+  color:var(--flag);padding:14px 0}
+.flag .wrap{display:flex;gap:14px;align-items:flex-start}
+.flag b{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px;
+  border:1.5px solid var(--flag);padding:3px 7px;white-space:nowrap;margin-top:1px}
+.flag p{margin:0;font-size:14px;line-height:1.45;max-width:75ch}
+
+header{padding:56px 0 8px}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-2);margin:0 0 18px}
+h1{font-family:"Archivo",ui-sans-serif,system-ui,sans-serif;font-weight:700;
+  font-size:clamp(34px,6vw,60px);line-height:1.02;letter-spacing:-.025em;margin:0;
+  max-width:16ch}
+h1 em{font-style:normal;color:var(--p2)}
+.stand{margin:20px 0 0;font-size:19px;color:var(--ink-2);max-width:62ch}
+
+section{padding:52px 0}
+h2{font-family:"Archivo",ui-sans-serif,system-ui,sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;margin:0 0 6px;
+  padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.note{color:var(--ink-2);font-size:15px;margin:14px 0 26px;max-width:68ch}
+
+/* ---- signature: the dial ---- */
+.dial{background:var(--card);border:1px solid var(--rule);padding:30px 28px 22px}
+.readout{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+  min-height:76px;margin-bottom:6px}
+.readout .big{font-size:clamp(46px,9vw,76px);font-weight:600;line-height:.95;
+  letter-spacing:-.03em;color:var(--p1)}
+.readout .desc{font-size:14px;color:var(--ink-2);line-height:1.45}
+.readout .desc b{color:var(--ink);font-weight:600}
+.axis{width:100%;height:112px;display:block;touch-action:none}
+.axis .tick{cursor:pointer}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;
+  font-size:12px;color:var(--ink-2)}
+.legend i{display:inline-block;width:11px;height:11px;margin-right:6px;
+  vertical-align:-1px;border-radius:50%}
+.tabs{display:flex;gap:0;margin-bottom:18px;border:1px solid var(--rule);width:max-content}
+.tabs button{font:inherit;font-size:13px;padding:8px 18px;background:var(--card);
+  border:0;border-right:1px solid var(--rule);cursor:pointer;color:var(--ink-2)}
+.tabs button:last-child{border-right:0}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff}
+.tabs button:focus-visible{outline:2px solid var(--p2);outline-offset:-2px}
+
+/* ---- grid ---- */
+table{width:100%;border-collapse:collapse;background:var(--card);
+  border:1px solid var(--rule)}
+th,td{padding:9px 12px;text-align:right;font-size:14px;border-bottom:1px solid #E4E8ED}
+th{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);
+  font-weight:600;border-bottom:1.5px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+tbody tr:last-child td{border-bottom:0}
+tr.grp td{background:#F2F5F8;font-weight:600;font-size:12px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-2)}
+.ci{color:var(--ink-2);font-size:12px;margin-left:5px}
+.u-hi{color:var(--warn);font-weight:600}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+figure{margin:0}
+figcaption{font-size:13px;color:var(--ink-2);margin-top:12px;line-height:1.5}
+
+pre{background:var(--ink);color:#DCE3EA;padding:16px 18px;overflow-x:auto;
+  font-size:13px;line-height:1.65;border-radius:2px}
+pre b{color:#8FC4DE;font-weight:600}
+footer{border-top:1px solid var(--rule);padding:30px 0 60px;font-size:13px;
+  color:var(--ink-2)}
+footer p{max-width:72ch}
+a{color:var(--p1)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.tick,.readout .big{transition:opacity .12s ease}
+</style></head><body>
+
+<div class="flag"><div class="wrap">
+  <b>Synthetic</b>
+  <p>No real model was evaluated. This sandbox blocks <span class="mono">huggingface.co</span>
+  and has no inference API key, so completions come from a stipulated offline stub. The benchmark
+  items, the extraction rules, the statistics and this page are real; <b>the accuracy levels and the
+  size of the temperature effect are not measurements of anything.</b> Point the harness at a live
+  model to replace them.</p>
+</div></div>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Inspect AI · GSM8K + BIG-Bench Hard · n = 200 per condition</p>
+  <h1>One model. <em id="claim">36 defensible scores.</em></h1>
+  <p class="stand">Fix the model and the questions. Vary only the prompt format, the sampling
+  temperature, and the regex that reads the answer out. The reported score moves by
+  <span id="claimpp" class="mono"></span> — before anyone has changed a single weight.</p>
+</header>
+
+<section>
+  <h2>Every number you could have published</h2>
+  <p class="note">Each tick is one complete evaluation run. Hover or tab through them to see
+  which methodology produces which headline.</p>
+  <div class="tabs" role="tablist"><button data-suite="gsm8k" aria-selected="true">GSM8K</button><button data-suite="bbh_date_understanding" aria-selected="false">BBH · date understanding</button></div>
+  <div class="dial">
+    <div class="readout mono" id="readout"></div>
+    <div id="dial"></div>
+    <div class="legend">
+      <span><i style="background:var(--p1)"></i>strict — requires the <span class="mono">#### x</span> contract</span>
+      <span><i style="background:var(--p2)"></i>flexible — also accepts "the answer is x"</span>
+      <span><i style="background:var(--p3)"></i>permissive — last number in the completion</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The condition grid</h2>
+  <p class="note">The three accuracy columns score the <em>same</em> completions. Any gap between
+  them is produced entirely by the answer-extraction rule. The final column is the share of
+  completions no strict parser could read — the quiet failure that gets recorded as
+  a wrong answer.</p>
+  <table><thead><tr><th>condition</th><th>strict</th><th>flexible</th>
+    <th>permissive</th><th>unreadable</th></tr></thead>
+    <tbody id="tbody"></tbody></table>
+</section>
+
+<section class="cols">
+  <figure>
+    <h2>What the temperature effect really is</h2>
+    <p class="note">Raising temperature makes a model reason worse — and also makes it stop
+    following the output format. A strict parser charges both to the same account.</p>
+    <div id="decomp"></div>
+    <figcaption><span style="color:var(--p2)">■</span> genuine reasoning loss (visible to a
+    flexible parser) &nbsp; <span style="color:var(--warn)">■</span> format drift misread as
+    wrong answers. Bars show the drop from T=0.0 to T=1.0 under the strict parser.</figcaption>
+  </figure>
+  <figure>
+    <h2>Reproducing this</h2>
+    <p class="note">The offline stub is the only synthetic component, and it is one flag.
+    Everything else — items, prompts, parsers, bootstrap CIs, McNemar tests — runs unchanged
+    against a real endpoint.</p>
+<pre># stub, no network needed
+python3 run_grid.py -n 200
+
+# a real open model, served locally
+python3 run_grid.py <b>--live</b> \
+  --model vllm/Qwen/Qwen2.5-7B-Instruct -n 200
+
+python3 build_dashboard.py</pre>
+    <figcaption>Paired McNemar tests are valid here because both parsers see identical
+    completions, so the pairing is exact and the model contributes zero variance to the
+    contrast.</figcaption>
+  </figure>
+</section>
+
+<footer>
+  <p><b>Method.</b> GSM8K test split (openai/grade-school-math) and BIG-Bench Hard
+  (suzgunmirac/BIG-Bench-Hard), items sampled with a fixed seed and held identical across all
+  conditions. Confidence intervals are percentile bootstrap over items, 5,000 resamples;
+  at n=200 a single condition is only precise to roughly ±7 points, so
+  the wide contrasts here matter and the narrow ones do not. Harness: Inspect AI
+  0.3.251.</p>
+</footer>
+</div>
+<script>
+const D = {"meta": {"model": "mockllm/model", "offline_stub": true, "n_per_condition": 200, "temps": [0.0, 0.7, 1.0], "formats": ["bare", "cot_zero_shot", "cot_tagged", "fewshot_tagged"], "parsers": ["parse_strict", "parse_flexible", "parse_last_number"], "harness": "inspect_ai"}, "cells": [{"suite": "gsm8k", "fmt": "bare", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.09, "ci_lo": 0.055, "ci_hi": 0.135, "unparsed_rate": 0.57}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.21, "ci_lo": 0.155, "ci_hi": 0.27, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.07, "ci_lo": 0.04, "ci_hi": 0.105, "unparsed_rate": 0.59}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.195, "ci_lo": 0.14, "ci_hi": 0.25, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "bare", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "gsm8k", "fmt": "bare", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.08, "ci_lo": 0.045, "ci_hi": 0.12, "unparsed_rate": 0.59}, {"suite": "gsm8k", "fmt": "bare", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.15, "ci_lo": 0.105, "ci_hi": 0.2, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.475, "ci_lo": 0.405, "ci_hi": 0.545, "unparsed_rate": 0.23}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.58, "ci_lo": 0.51, "ci_hi": 0.645, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.29, "ci_lo": 0.225, "ci_hi": 0.355, "unparsed_rate": 0.21}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.39, "ci_lo": 0.32, "ci_hi": 0.46, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.355, "ci_lo": 0.29, "ci_hi": 0.42, "unparsed_rate": 0.225}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.41, "ci_lo": 0.345, "ci_hi": 0.48, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.5, "ci_lo": 0.43, "ci_hi": 0.57, "unparsed_rate": 0.06}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.52, "ci_lo": 0.45, "ci_hi": 0.59, "unparsed_rate": 0.04}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.53, "ci_lo": 0.46, "ci_hi": 0.6, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.265, "ci_lo": 0.205, "ci_hi": 0.325, "unparsed_rate": 0.32}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.38, "ci_lo": 0.315, "ci_hi": 0.445, "unparsed_rate": 0.07}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.405, "ci_lo": 0.335, "ci_hi": 0.475, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.24, "ci_lo": 0.185, "ci_hi": 0.3, "unparsed_rate": 0.43}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.385, "ci_lo": 0.32, "ci_hi": 0.455, "unparsed_rate": 0.115}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.435, "ci_lo": 0.365, "ci_hi": 0.505, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.61, "ci_lo": 0.54, "ci_hi": 0.675, "unparsed_rate": 0.02}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.62, "ci_lo": 0.55, "ci_hi": 0.685, "unparsed_rate": 0.005}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.62, "ci_lo": 0.55, "ci_hi": 0.685, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.52, "ci_lo": 0.45, "ci_hi": 0.585, "unparsed_rate": 0.07}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.57, "ci_lo": 0.5, "ci_hi": 0.635, "unparsed_rate": 0.015}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.575, "ci_lo": 0.505, "ci_hi": 0.64, "unparsed_rate": 0.0}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.405, "ci_lo": 0.34, "ci_hi": 0.47, "unparsed_rate": 0.105}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.43, "ci_lo": 0.36, "ci_hi": 0.5, "unparsed_rate": 0.05}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.45, "ci_lo": 0.38, "ci_hi": 0.52, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.06, "ci_lo": 0.03, "ci_hi": 0.095, "unparsed_rate": 0.66}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.195, "ci_lo": 0.14, "ci_hi": 0.25, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.1, "ci_lo": 0.06, "ci_hi": 0.145, "unparsed_rate": 0.535}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.21, "ci_lo": 0.155, "ci_hi": 0.27, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.05, "ci_lo": 0.02, "ci_hi": 0.08, "unparsed_rate": 0.59}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.125, "ci_lo": 0.08, "ci_hi": 0.175, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.275, "ci_lo": 0.215, "ci_hi": 0.335, "unparsed_rate": 0.475}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.525, "ci_lo": 0.46, "ci_hi": 0.595, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.165, "ci_lo": 0.115, "ci_hi": 0.215, "unparsed_rate": 0.55}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.38, "ci_lo": 0.315, "ci_hi": 0.445, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.195, "ci_lo": 0.14, "ci_hi": 0.25, "unparsed_rate": 0.485}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.385, "ci_lo": 0.315, "ci_hi": 0.455, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.565, "ci_lo": 0.495, "ci_hi": 0.635, "unparsed_rate": 0.05}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.57, "ci_lo": 0.5, "ci_hi": 0.64, "unparsed_rate": 0.025}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.585, "ci_lo": 0.515, "ci_hi": 0.655, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.285, "ci_lo": 0.225, "ci_hi": 0.35, "unparsed_rate": 0.35}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.36, "ci_lo": 0.295, "ci_hi": 0.43, "unparsed_rate": 0.175}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.45, "ci_lo": 0.38, "ci_hi": 0.52, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.245, "ci_lo": 0.185, "ci_hi": 0.305, "unparsed_rate": 0.385}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.315, "ci_lo": 0.25, "ci_hi": 0.38, "unparsed_rate": 0.195}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.41, "ci_lo": 0.34, "ci_hi": 0.48, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.575, "ci_lo": 0.505, "ci_hi": 0.645, "unparsed_rate": 0.025}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.58, "ci_lo": 0.51, "ci_hi": 0.645, "unparsed_rate": 0.02}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.595, "ci_lo": 0.525, "ci_hi": 0.665, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.7, "parser": "parse_strict", "n": 200, "acc": 0.43, "ci_lo": 0.365, "ci_hi": 0.5, "unparsed_rate": 0.105}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.7, "parser": "parse_flexible", "n": 200, "acc": 0.45, "ci_lo": 0.385, "ci_hi": 0.52, "unparsed_rate": 0.065}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.7, "parser": "parse_last_number", "n": 200, "acc": 0.48, "ci_lo": 0.41, "ci_hi": 0.55, "unparsed_rate": 0.0}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 1.0, "parser": "parse_strict", "n": 200, "acc": 0.405, "ci_lo": 0.34, "ci_hi": 0.47, "unparsed_rate": 0.145}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 1.0, "parser": "parse_flexible", "n": 200, "acc": 0.425, "ci_lo": 0.36, "ci_hi": 0.495, "unparsed_rate": 0.065}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 1.0, "parser": "parse_last_number", "n": 200, "acc": 0.46, "ci_lo": 0.39, "ci_hi": 0.53, "unparsed_rate": 0.0}], "contrasts": [{"suite": "gsm8k", "fmt": "bare", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.09, "only_b": 18, "only_a": 0, "p": 7.62939453125e-06}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.09, "acc_b": 0.21, "only_b": 24, "only_a": 0, "p": 1.1920928955078125e-07}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.07, "only_b": 14, "only_a": 0, "p": 0.0001220703125}, {"suite": "gsm8k", "fmt": "bare", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.07, "acc_b": 0.195, "only_b": 25, "only_a": 0, "p": 5.960464477539063e-08}, {"suite": "gsm8k", "fmt": "bare", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.08, "only_b": 16, "only_a": 0, "p": 3.0517578125e-05}, {"suite": "gsm8k", "fmt": "bare", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.08, "acc_b": 0.15, "only_b": 14, "only_a": 0, "p": 0.0001220703125}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.475, "only_b": 95, "only_a": 0, "p": 5.048709793414476e-29}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.475, "acc_b": 0.58, "only_b": 21, "only_a": 0, "p": 9.5367431640625e-07}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.29, "only_b": 58, "only_a": 0, "p": 6.938893903907228e-18}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.29, "acc_b": 0.39, "only_b": 20, "only_a": 0, "p": 1.9073486328125e-06}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.355, "only_b": 71, "only_a": 0, "p": 8.470329472543003e-22}, {"suite": "gsm8k", "fmt": "cot_zero_shot", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.355, "acc_b": 0.41, "only_b": 11, "only_a": 0, "p": 0.0009765625}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.5, "acc_b": 0.52, "only_b": 4, "only_a": 0, "p": 0.125}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.52, "acc_b": 0.53, "only_b": 2, "only_a": 0, "p": 0.5}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.265, "acc_b": 0.38, "only_b": 23, "only_a": 0, "p": 2.384185791015625e-07}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.38, "acc_b": 0.405, "only_b": 5, "only_a": 0, "p": 0.0625}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.24, "acc_b": 0.385, "only_b": 29, "only_a": 0, "p": 3.725290298461914e-09}, {"suite": "gsm8k", "fmt": "cot_tagged", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.385, "acc_b": 0.435, "only_b": 10, "only_a": 0, "p": 0.001953125}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.61, "acc_b": 0.62, "only_b": 2, "only_a": 0, "p": 0.5}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.62, "acc_b": 0.62, "only_b": 0, "only_a": 0, "p": 1.0}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.52, "acc_b": 0.57, "only_b": 10, "only_a": 0, "p": 0.001953125}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.57, "acc_b": 0.575, "only_b": 1, "only_a": 0, "p": 1.0}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.405, "acc_b": 0.43, "only_b": 5, "only_a": 0, "p": 0.0625}, {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.43, "acc_b": 0.45, "only_b": 4, "only_a": 0, "p": 0.125}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.06, "only_b": 12, "only_a": 0, "p": 0.00048828125}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.06, "acc_b": 0.195, "only_b": 27, "only_a": 0, "p": 1.4901161193847656e-08}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.1, "only_b": 20, "only_a": 0, "p": 1.9073486328125e-06}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.1, "acc_b": 0.21, "only_b": 22, "only_a": 0, "p": 4.76837158203125e-07}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.05, "only_b": 10, "only_a": 0, "p": 0.001953125}, {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.05, "acc_b": 0.125, "only_b": 15, "only_a": 0, "p": 6.103515625e-05}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.275, "only_b": 55, "only_a": 0, "p": 5.551115123125783e-17}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.275, "acc_b": 0.525, "only_b": 50, "only_a": 0, "p": 1.7763568394002505e-15}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.165, "only_b": 33, "only_a": 0, "p": 2.3283064365386963e-10}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.165, "acc_b": 0.38, "only_b": 43, "only_a": 0, "p": 2.2737367544323206e-13}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.0, "acc_b": 0.195, "only_b": 39, "only_a": 0, "p": 3.637978807091713e-12}, {"suite": "bbh_date_understanding", "fmt": "cot_zero_shot", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.195, "acc_b": 0.385, "only_b": 38, "only_a": 0, "p": 7.275957614183426e-12}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.565, "acc_b": 0.57, "only_b": 1, "only_a": 0, "p": 1.0}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.57, "acc_b": 0.585, "only_b": 3, "only_a": 0, "p": 0.25}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.285, "acc_b": 0.36, "only_b": 15, "only_a": 0, "p": 6.103515625e-05}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.36, "acc_b": 0.45, "only_b": 18, "only_a": 0, "p": 7.62939453125e-06}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.245, "acc_b": 0.315, "only_b": 14, "only_a": 0, "p": 0.0001220703125}, {"suite": "bbh_date_understanding", "fmt": "cot_tagged", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.315, "acc_b": 0.41, "only_b": 19, "only_a": 0, "p": 3.814697265625e-06}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.575, "acc_b": 0.58, "only_b": 1, "only_a": 0, "p": 1.0}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.58, "acc_b": 0.595, "only_b": 3, "only_a": 0, "p": 0.25}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.7, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.43, "acc_b": 0.45, "only_b": 4, "only_a": 0, "p": 0.125}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.7, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.45, "acc_b": 0.48, "only_b": 6, "only_a": 0, "p": 0.03125}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 1.0, "a": "parse_strict", "b": "parse_flexible", "acc_a": 0.405, "acc_b": 0.425, "only_b": 4, "only_a": 0, "p": 0.125}, {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 1.0, "a": "parse_flexible", "b": "parse_last_number", "acc_a": 0.425, "acc_b": 0.46, "only_b": 7, "only_a": 0, "p": 0.015625}], "decomp": {"gsm8k": [{"fmt": "bare", "reported": 0.0, "reasoning": 0.009999999999999995, "drift": -0.009999999999999995, "u0": 1.0, "u1": 1.0}, {"fmt": "cot_zero_shot", "reported": 0.0, "reasoning": 0.12, "drift": -0.12, "u0": 1.0, "u1": 1.0}, {"fmt": "cot_tagged", "reported": 0.26, "reasoning": 0.135, "drift": 0.125, "u0": 0.06, "u1": 0.43}, {"fmt": "fewshot_tagged", "reported": 0.20499999999999996, "reasoning": 0.19, "drift": 0.014999999999999958, "u0": 0.02, "u1": 0.105}], "bbh_date_understanding": [{"fmt": "bare", "reported": 0.0, "reasoning": 0.009999999999999995, "drift": -0.009999999999999995, "u0": 1.0, "u1": 1.0}, {"fmt": "cot_zero_shot", "reported": 0.0, "reasoning": 0.08000000000000002, "drift": -0.08000000000000002, "u0": 1.0, "u1": 1.0}, {"fmt": "cot_tagged", "reported": 0.31999999999999995, "reasoning": 0.25499999999999995, "drift": 0.065, "u0": 0.05, "u1": 0.385}, {"fmt": "fewshot_tagged", "reported": 0.16999999999999993, "reasoning": 0.15499999999999997, "drift": 0.014999999999999958, "u0": 0.025, "u1": 0.145}]}, "spread": {"gsm8k": {"lo": {"suite": "gsm8k", "fmt": "bare", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, "hi": {"suite": "gsm8k", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_flexible", "n": 200, "acc": 0.62, "ci_lo": 0.55, "ci_hi": 0.685, "unparsed_rate": 0.005}, "range": 0.62}, "bbh_date_understanding": {"lo": {"suite": "bbh_date_understanding", "fmt": "bare", "temp": 0.0, "parser": "parse_strict", "n": 200, "acc": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "unparsed_rate": 1.0}, "hi": {"suite": "bbh_date_understanding", "fmt": "fewshot_tagged", "temp": 0.0, "parser": "parse_last_number", "n": 200, "acc": 0.595, "ci_lo": 0.525, "ci_hi": 0.665, "unparsed_rate": 0.0}, "range": 0.595}}, "plabel": {"parse_strict": "strict", "parse_flexible": "flexible", "parse_last_number": "permissive"}, "flabel": {"bare": "bare", "cot_zero_shot": "CoT, no contract", "cot_tagged": "CoT + '#### x'", "fewshot_tagged": "3-shot + '#### x'"}, "suites": ["gsm8k", "bbh_date_understanding"]};
+const PC = {parse_strict:'var(--p1)', parse_flexible:'var(--p2)', parse_last_number:'var(--p3)'};
+let suite = D.suites[0];
+
+const pct = v => (v*100).toFixed(1)+'%';
+
+/* ---------- signature dial ---------- */
+function drawDial(){
+  const W=1000, H=112, L=34, R=34, y=64;
+  const cells = D.cells.filter(c=>c.suite===suite);
+  const x = a => L + a*(W-L-R);
+  let s = `<svg class="axis" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
+            role="img" aria-label="All reportable scores for one model">`;
+  s += `<line x1="${x(0)}" y1="${y}" x2="${x(1)}" y2="${y}" stroke="var(--rule)" stroke-width="1.5"/>`;
+  for(let i=0;i<=10;i+=2){
+    s+=`<line x1="${x(i/10)}" y1="${y}" x2="${x(i/10)}" y2="${y+8}" stroke="var(--rule)"/>`;
+    s+=`<text x="${x(i/10)}" y="${y+26}" font-size="11" fill="#4A5561"
+         text-anchor="middle" font-family="IBM Plex Mono,monospace">${i*10}%</text>`;
+  }
+  cells.forEach((c,i)=>{
+    s+=`<line class="tick" data-i="${i}" x1="${x(c.acc)}" y1="${y-34}" x2="${x(c.acc)}" y2="${y}"
+        stroke="${PC[c.parser]}" stroke-width="3" opacity=".78" tabindex="0"/>`;
+  });
+  s+='</svg>';
+  document.getElementById('dial').innerHTML = s;
+
+  const svg = document.querySelector('.axis');
+  const show = i => {
+    const c = cells[i];
+    document.getElementById('readout').innerHTML =
+      `<div class="big mono">${pct(c.acc)}</div>
+       <div class="desc">prompt <b>${D.flabel[c.fmt]}</b> &nbsp;·&nbsp; temperature <b class="mono">${c.temp}</b>
+        &nbsp;·&nbsp; <b>${D.plabel[c.parser]}</b> answer extraction<br>
+        95% CI <span class="mono">[${pct(c.ci_lo)}, ${pct(c.ci_hi)}]</span>
+        &nbsp;·&nbsp; unreadable completions <span class="mono">${pct(c.unparsed_rate)}</span></div>`;
+    svg.querySelectorAll('.tick').forEach(t=>t.setAttribute('opacity', t.dataset.i==i?'1':'.28'));
+  };
+  svg.querySelectorAll('.tick').forEach(t=>{
+    t.addEventListener('mouseenter',()=>show(t.dataset.i));
+    t.addEventListener('focus',()=>show(t.dataset.i));
+  });
+  const sp = D.spread[suite];
+  const hi = cells.findIndex(c=>c.acc===sp.hi.acc);
+  show(hi<0?0:hi);
+  document.getElementById('claim').textContent =
+    `${pct(sp.lo.acc)} to ${pct(sp.hi.acc)}`;
+  document.getElementById('claimpp').textContent =
+    `${(sp.range*100).toFixed(1)} points`;
+}
+
+/* ---------- condition table ---------- */
+function drawTable(){
+  const rows = D.meta.formats.map(f=>{
+    let out = `<tr class="grp"><td colspan="5">${D.flabel[f]}</td></tr>`;
+    D.meta.temps.forEach(t=>{
+      const g = p => D.cells.find(c=>c.suite===suite&&c.fmt===f&&c.temp===t&&c.parser===p);
+      const st=g('parse_strict'), fl=g('parse_flexible'), ln=g('parse_last_number');
+      if(!st) return;
+      const u = st.unparsed_rate;
+      out += `<tr><td class="mono">T = ${t.toFixed(1)}</td>
+        <td class="mono">${pct(st.acc)}<span class="ci">±${((st.ci_hi-st.ci_lo)/2*100).toFixed(1)}</span></td>
+        <td class="mono">${pct(fl.acc)}<span class="ci">±${((fl.ci_hi-fl.ci_lo)/2*100).toFixed(1)}</span></td>
+        <td class="mono">${pct(ln.acc)}<span class="ci">±${((ln.ci_hi-ln.ci_lo)/2*100).toFixed(1)}</span></td>
+        <td class="mono ${u>=0.3?'u-hi':''}">${pct(u)}</td></tr>`;
+    });
+    return out;
+  }).join('');
+  document.getElementById('tbody').innerHTML = rows;
+}
+
+/* ---------- decomposition ---------- */
+function drawDecomp(){
+  const rows = D.decomp[suite].filter(r=>r.reported>0.001);
+  const W=520, rowH=54, H=rows.length*rowH+34, L=140;
+  const max = Math.max(...rows.map(r=>Math.max(r.reported,0.01)));
+  const x = v => L + (v/max)*(W-L-24);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img"
+    aria-label="Temperature effect split into reasoning loss and format drift">`;
+  rows.forEach((r,i)=>{
+    const y=i*rowH+12, h=17;
+    const wR=x(Math.max(r.reasoning,0))-L, wD=x(r.reported)-x(Math.max(r.reasoning,0));
+    s+=`<text x="0" y="${y+13}" font-size="12" fill="#12181F">${D.flabel[r.fmt]}</text>`;
+    s+=`<rect x="${L}" y="${y}" width="${Math.max(wR,0)}" height="${h}" fill="var(--p2)"/>`;
+    s+=`<rect x="${x(Math.max(r.reasoning,0))}" y="${y}" width="${Math.max(wD,0)}" height="${h}" fill="var(--warn)"/>`;
+    s+=`<text x="${x(r.reported)+7}" y="${y+13}" font-size="11.5" fill="#4A5561"
+        font-family="IBM Plex Mono,monospace">${(r.reported*100).toFixed(1)} pp</text>`;
+    s+=`<text x="${L}" y="${y+34}" font-size="11" fill="#4A5561">`+
+       `unreadable ${(r.u0*100).toFixed(0)}% → ${(r.u1*100).toFixed(0)}%</text>`;
+  });
+  s+='</svg>';
+  document.getElementById('decomp').innerHTML=s;
+}
+
+function render(){ drawDial(); drawTable(); drawDecomp(); }
+document.querySelectorAll('.tabs button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    suite=b.dataset.suite;
+    document.querySelectorAll('.tabs button').forEach(o=>
+      o.setAttribute('aria-selected', String(o===b)));
+    render();
+  });
+});
+render();
+</script>
+</body></html>

@@ -1,0 +1,172 @@
+Metadata-Version: 2.4
+Name: evalfrag
+Version: 1.0.0
+Summary: Production-grade Inspect AI harness for measuring prompt, decoding, and answer-extraction sensitivity.
+Author: EvalFrag contributors
+License: MIT
+Requires-Python: <3.14,>=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: inspect-ai==0.3.251
+Requires-Dist: pydantic<3,>=2.10
+Provides-Extra: dev
+Requires-Dist: pytest<10,>=8.3; extra == "dev"
+Requires-Dist: pytest-cov<8,>=6; extra == "dev"
+Requires-Dist: ruff<1,>=0.12; extra == "dev"
+Requires-Dist: mypy<2,>=1.16; extra == "dev"
+Provides-Extra: openai
+Requires-Dist: openai<2,>=1.97; extra == "openai"
+Dynamic: license-file
+
+# EvalFrag
+
+EvalFrag is a production-oriented [Inspect AI](https://inspect.aisi.org.uk/) experiment for measuring how much a reasoning benchmark score moves when the **model and benchmark items stay fixed** but the evaluation method changes.
+
+It varies:
+
+- prompt format: bare, zero-shot chain-of-thought, explicit output contract, and few-shot with output contract;
+- sampling temperature and generation seed;
+- answer extraction: strict, flexible, and permissive.
+
+The same completion is scored by all three parsers. That makes parser contrasts exact at the completion level and exposes a failure mode that aggregate accuracy usually hides: the model may contain the right answer while the evaluator fails to read it.
+
+## Production properties
+
+- **Live mode is the default.** Synthetic mode must be selected explicitly and permanently watermarks every artifact.
+- **Retryable execution.** Runs use Inspect `eval_set`, sample retries, request retries, task checkpoints, and unique output directories.
+- **Stable experimental units.** Sample IDs are hashes of source questions and remain identical across prompt and temperature conditions.
+- **Dataset integrity.** Benchmark files are downloaded from their public source repositories, checksummed into `data/manifest.json`, and revalidated before every run.
+- **Audit artifacts.** Each run contains the resolved configuration, Git/runtime provenance, raw Inspect logs, a bundled Inspect viewer, sample-level score records, validated aggregate results, failures, a state file, a cryptographic artifact manifest, and a self-contained dashboard.
+- **Safer statistics.** Per-seed accuracy uses Wilson intervals. Pooled intervals bootstrap benchmark items after averaging over configured seeds. Temperature and prompt contrasts are paired by stable sample ID.
+- **No causal overclaim.** The dashboard does not label flexible-parser movement as “reasoning loss.” It is reported as a score change under a less brittle extractor.
+- **No external dashboard dependencies.** The HTML contains its own CSS, JavaScript, validated result payload, and a restrictive content-security policy.
+- **Strict completeness gate.** Aggregation is blocked unless every configured condition has exactly the expected items, with no duplicate records or cross-condition item drift.
+- **Separate publication gate.** `release-check` rejects synthetic, incomplete, or deployment-unidentified results even when exploratory execution succeeded.
+
+## Install
+
+Python 3.11, 3.12, and 3.13 are supported; 3.12 is recommended for deployment unless your platform standardizes on another supported version.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+```
+
+The project pins `inspect-ai==0.3.251` and the evaluator code follows that version’s `eval_set()` `(success, logs)` contract. Update that pin deliberately, run the full test suite, and complete in-flight eval sets before upgrading because eval/task identity can change across Inspect releases.
+
+## Prepare benchmark data
+
+```bash
+evalfrag prepare-data --data-dir data
+evalfrag validate-data --data-dir data
+```
+
+This downloads:
+
+- GSM8K test data from `openai/grade-school-math`;
+- BBH date-understanding data and its official CoT prompt from `suzgunmirac/BIG-Bench-Hard`.
+
+The downloaded data is not committed by default. See `DATASETS.md` for provenance and license notes.
+
+## Run against a local vLLM server
+
+Start a vLLM OpenAI-compatible endpoint separately, then:
+
+```bash
+export EVALFRAG_MODEL_BASE_URL=http://127.0.0.1:8000/v1
+evalfrag run --config configs/default.toml
+```
+
+The configured model is `vllm/Qwen/Qwen2.5-7B-Instruct`. Change the model and concurrency limits in the TOML file to match your hardware. Fill in `model_revision`, `tokenizer_revision`, `serving_engine`, `serving_engine_version`, `quantization`, and `chat_template_sha256` before a publishable run. Inspect's current vLLM provider uses a local server architecture; the evaluator should not load the model in the same process.
+
+## Synthetic pipeline verification
+
+```bash
+evalfrag run --config configs/synthetic.toml
+```
+
+Synthetic scores verify prompt rendering, parsing, statistics, aggregation, result validation, and dashboard generation. They are not evidence about any model.
+
+## Run artifacts
+
+Each run is written to `runs/<run-id>/`:
+
+```text
+config.resolved.json      exact configuration used
+provenance.json           config hash, Git state, runtime, dataset hashes
+failures.json             failed task summary; empty on success
+run_state.json            running, complete, or failed terminal state
+inspect-logs/             native Inspect .eval logs
+inspect-viewer/           static Inspect log viewer bundle
+records.jsonl             sample-level parser outcomes and output hashes
+results.json              schema-v2 aggregate results
+dashboard.html            self-contained methodology dashboard
+artifacts.manifest.json    SHA-256 and byte size for every generated file
+```
+
+Completion text is omitted from `records.jsonl` by default, but it remains present in the access-controlled Inspect logs. Set `store_completion_text=true` only when the additional duplication is useful and approved.
+
+## Validate or rebuild artifacts
+
+```bash
+evalfrag validate-results --results runs/<run-id>/results.json
+evalfrag verify-artifacts --run-dir runs/<run-id>
+evalfrag release-check --results runs/<run-id>/results.json
+
+evalfrag dashboard \
+  --results runs/<run-id>/results.json \
+  --output runs/<run-id>/dashboard.html
+```
+
+## Migrating the original prototype
+
+The uploaded prototype used a summary-only v1 JSON schema. It can be migrated for display, but it cannot recover sample-level paired intervals:
+
+```bash
+evalfrag migrate-v1 \
+  --input examples/synthetic/results-v1.json \
+  --output examples/synthetic/results.json
+
+evalfrag dashboard \
+  --results examples/synthetic/results.json \
+  --output examples/synthetic/dashboard.html
+```
+
+## Tests and quality gates
+
+```bash
+make test
+make lint
+make check
+```
+
+CI runs parser, configuration, dataset-integrity, statistics, schema, runner-contract, release-gate, artifact-integrity, and dashboard tests on Python 3.11, 3.12, and 3.13. Live model calls are intentionally excluded from CI; production deployment must add a small endpoint smoke test using an approved model and credentials.
+
+## Interpretation rules
+
+1. Report the full method: model revision, provider, prompt format, decoder settings, seed set, parser, sample selection seed, and harness versions.
+2. Report unparsed-output rate beside accuracy.
+3. Treat permissive extraction as a sensitivity analysis, not automatically as the authoritative score.
+4. Do not generalize item-bootstrap intervals to model families, providers, or prompts not included in the run.
+5. Review raw completions behind large parser gaps before publication.
+6. Do not compare a synthetic run to a live run.
+
+## Security
+
+See `SECURITY.md`, `PRODUCTION_READINESS.md`, and `VERIFICATION.md`. In particular, keep Inspect logs private unless they have been reviewed, because logs contain prompts and model completions even when `records.jsonl` stores only hashes.
+
+## Container
+
+Build with an approved Python base-image digest and release metadata:
+
+```bash
+docker build \
+  --build-arg PYTHON_IMAGE=python:3.12-slim@sha256:<approved-digest> \
+  --build-arg VCS_REF=$(git rev-parse HEAD) \
+  --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+  -t evalfrag:1.0.0 .
+```
+
+Mount `/app/data` and `/app/runs` on persistent, access-controlled storage. The image runs as the unprivileged `evalfrag` user and contains the CLI, configuration templates, and runtime dependencies, but no model weights or credentials.

@@ -1,0 +1,45 @@
+[experiment]
+name = "evalfrag-synthetic"
+mode = "synthetic"
+model = "mockllm/model"
+model_args = {}
+# Fill these for live publication; they are surfaced in results and warnings.
+model_revision = ""
+tokenizer_revision = ""
+serving_engine = ""
+serving_engine_version = ""
+quantization = ""
+chat_template_sha256 = ""
+suites = ["gsm8k", "bbh_date_understanding"]
+prompt_formats = ["bare", "cot_zero_shot", "cot_tagged", "fewshot_tagged"]
+temperatures = [0.0, 0.7, 1.0]
+seeds = [42, 43, 44]
+n = 200
+dataset_seed = 2026
+max_tokens = 512
+top_p = 1.0
+output_dir = "../runs"
+data_dir = "../data"
+allow_unseeded_provider = false
+store_completion_text = false
+
+[runtime]
+max_tasks = 4
+max_samples = 16
+max_connections = 16
+timeout_seconds = 180
+attempt_timeout_seconds = 120
+model_max_retries = 0
+sample_retry_on_error = 0
+eval_set_retry_attempts = 0
+fail_on_error = true
+checkpoint = false
+
+[statistics]
+confidence_level = 0.95
+bootstrap_resamples = 5000
+bootstrap_seed = 1729
+
+[dashboard]
+title = "Synthetic pipeline verification"
+high_unparsed_threshold = 0.10

@@ -1,0 +1,434 @@
+{
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-fewshot-tagged-t1p0-s42_cPRVeQhjeNCy4iGTqJFTHU.eval": {
+    "eval_id": "cAeRxCGzrY9vz3qSsdBGdt",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_fewshot_tagged_t1p0_s42",
+    "task_id": "cPRVeQhjeNCy4iGTqJFTHU",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:41+00:00",
+    "completed_at": "2026-08-18T22:43:45+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-fewshot-tagged-t0p7-s42_B4mmVeotWYwv7bjG9dCPvZ.eval": {
+    "eval_id": "fCRdJcQwTgeREoc53bZVJc",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_fewshot_tagged_t0p7_s42",
+    "task_id": "B4mmVeotWYwv7bjG9dCPvZ",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:39+00:00",
+    "completed_at": "2026-08-18T22:43:44+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-fewshot-tagged-t0p0-s42_PG8fWk7TZKMeXKQyv3grY2.eval": {
+    "eval_id": "UaiGAr3CirjZTFxC8jiZaS",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_fewshot_tagged_t0p0_s42",
+    "task_id": "PG8fWk7TZKMeXKQyv3grY2",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:37+00:00",
+    "completed_at": "2026-08-18T22:43:43+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-cot-tagged-t1p0-s42_Vn4z22Nqr2igFLK3pDTP9K.eval": {
+    "eval_id": "brcQovk9kVdrRBEksfJipq",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_cot_tagged_t1p0_s42",
+    "task_id": "Vn4z22Nqr2igFLK3pDTP9K",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:36+00:00",
+    "completed_at": "2026-08-18T22:43:41+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.8,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-cot-tagged-t0p7-s42_7Lod6UKnj4z7hDGozHvers.eval": {
+    "eval_id": "3TTwcLFySXX6BZgfphbams",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_cot_tagged_t0p7_s42",
+    "task_id": "7Lod6UKnj4z7hDGozHvers",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:35+00:00",
+    "completed_at": "2026-08-18T22:43:41+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-cot-tagged-t0p0-s42_WQt2nsveP5Ti8xH8srKmxw.eval": {
+    "eval_id": "aGorvMC8TqKd8Epzp7nVuc",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_cot_tagged_t0p0_s42",
+    "task_id": "WQt2nsveP5Ti8xH8srKmxw",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:33+00:00",
+    "completed_at": "2026-08-18T22:43:39+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.9,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-cot-zero-shot-t1p0-s42_Y7eggYAPSLdaD5BCrEtPmK.eval": {
+    "eval_id": "YRQakinAU5vGHLrp5bMNDY",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_cot_zero_shot_t1p0_s42",
+    "task_id": "Y7eggYAPSLdaD5BCrEtPmK",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:32+00:00",
+    "completed_at": "2026-08-18T22:43:37+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-cot-zero-shot-t0p7-s42_6LnjpAfGk8cUAhKzfTCfeZ.eval": {
+    "eval_id": "be3NH9KszkKPGpRjAF25mL",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_cot_zero_shot_t0p7_s42",
+    "task_id": "6LnjpAfGk8cUAhKzfTCfeZ",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:30+00:00",
+    "completed_at": "2026-08-18T22:43:36+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-cot-zero-shot-t0p0-s42_YVmzy6FXHCnxvXRuJpoLgR.eval": {
+    "eval_id": "jsEHHiZzwhpVVBZF4EFWvt",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_cot_zero_shot_t0p0_s42",
+    "task_id": "YVmzy6FXHCnxvXRuJpoLgR",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:28+00:00",
+    "completed_at": "2026-08-18T22:43:35+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-bare-t1p0-s42_kjVFtm8JmtZDfkytoHCb6M.eval": {
+    "eval_id": "6HsMgdPLnEswUUvnc3XDAL",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_bare_t1p0_s42",
+    "task_id": "kjVFtm8JmtZDfkytoHCb6M",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:27+00:00",
+    "completed_at": "2026-08-18T22:43:32+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-bare-t0p7-s42_b7eSgkXjbTn2cVMhNdRZdS.eval": {
+    "eval_id": "GSfRqWUGhKPdYrWjM8giwW",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_bare_t0p7_s42",
+    "task_id": "b7eSgkXjbTn2cVMhNdRZdS",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:27+00:00",
+    "completed_at": "2026-08-18T22:43:32+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-bbh-date-understanding-bare-t0p0-s42_FApdia8w3H7SsUYHWbd8az.eval": {
+    "eval_id": "EbftsdWCkg7xH8MEiTcRYo",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_bbh_date_understanding_bare_t0p0_s42",
+    "task_id": "FApdia8w3H7SsUYHWbd8az",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:26+00:00",
+    "completed_at": "2026-08-18T22:43:30+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-fewshot-tagged-t1p0-s42_Y7JYmgQTPbaU689wtJWUX4.eval": {
+    "eval_id": "hj3ybJAGXX8aU4LMtxDXdN",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_fewshot_tagged_t1p0_s42",
+    "task_id": "Y7JYmgQTPbaU689wtJWUX4",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:23+00:00",
+    "completed_at": "2026-08-18T22:43:28+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-fewshot-tagged-t0p0-s42_UgFHJPSbDRrWu3uX2MCtie.eval": {
+    "eval_id": "TbMPdK8dqVzN83MAiEUeG3",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_fewshot_tagged_t0p0_s42",
+    "task_id": "UgFHJPSbDRrWu3uX2MCtie",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:22+00:00",
+    "completed_at": "2026-08-18T22:43:27+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-fewshot-tagged-t0p7-s42_ZVbG5cmJaHCCWoVAnUeDN5.eval": {
+    "eval_id": "8bHeHLA4BqguN9frPCHdk5",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_fewshot_tagged_t0p7_s42",
+    "task_id": "ZVbG5cmJaHCCWoVAnUeDN5",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:22+00:00",
+    "completed_at": "2026-08-18T22:43:27+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-cot-tagged-t1p0-s42_dws5b74cuFB5Dew44RQLvZ.eval": {
+    "eval_id": "FNF9jXTtTFDZuejH5LHuP3",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_cot_tagged_t1p0_s42",
+    "task_id": "dws5b74cuFB5Dew44RQLvZ",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:21+00:00",
+    "completed_at": "2026-08-18T22:43:26+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-cot-tagged-t0p7-s42_7qf32opQ7Z6LAaB8HcQaRR.eval": {
+    "eval_id": "HFmc75wQGmFC2hhsyzvKsT",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_cot_tagged_t0p7_s42",
+    "task_id": "7qf32opQ7Z6LAaB8HcQaRR",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:18+00:00",
+    "completed_at": "2026-08-18T22:43:23+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-cot-tagged-t0p0-s42_JJd5nDhUtcV9FDV7eYYSGM.eval": {
+    "eval_id": "BVydfMXtEpBkDLtAdnY8HR",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_cot_tagged_t0p0_s42",
+    "task_id": "JJd5nDhUtcV9FDV7eYYSGM",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:16+00:00",
+    "completed_at": "2026-08-18T22:43:22+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 1.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-cot-zero-shot-t1p0-s42_jXETJHafLJ3AwduGHXqF4i.eval": {
+    "eval_id": "fUYPiSrZeghfy454PHNEn7",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_cot_zero_shot_t1p0_s42",
+    "task_id": "jXETJHafLJ3AwduGHXqF4i",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:16+00:00",
+    "completed_at": "2026-08-18T22:43:22+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-cot-zero-shot-t0p7-s42_e5gZFiwDsWeB2EC4hxZpcv.eval": {
+    "eval_id": "Zcvqv77KGqzY2AJxxqM4vZ",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_cot_zero_shot_t0p7_s42",
+    "task_id": "e5gZFiwDsWeB2EC4hxZpcv",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:16+00:00",
+    "completed_at": "2026-08-18T22:43:21+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-cot-zero-shot-t0p0-s42_oRsa2iMKR3HLoJFGbLexrJ.eval": {
+    "eval_id": "UiMmHxrqtijMfF4TRy7W8M",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_cot_zero_shot_t0p0_s42",
+    "task_id": "oRsa2iMKR3HLoJFGbLexrJ",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:11+00:00",
+    "completed_at": "2026-08-18T22:43:18+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-bare-t1p0-s42_ehtVEHALi3k8QwwsoLaUut.eval": {
+    "eval_id": "C9bzAWnGNkZm5hiRj2y3BD",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_bare_t1p0_s42",
+    "task_id": "ehtVEHALi3k8QwwsoLaUut",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:11+00:00",
+    "completed_at": "2026-08-18T22:43:16+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-bare-t0p0-s42_5PcgxVRX2t6gmKb88cMuoS.eval": {
+    "eval_id": "G8sfPuP5yAQASEWi7g5ggK",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_bare_t0p0_s42",
+    "task_id": "5PcgxVRX2t6gmKb88cMuoS",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:11+00:00",
+    "completed_at": "2026-08-18T22:43:16+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  },
+  "2026-08-18T22-43-11-00-00_evalfrag-gsm8k-bare-t0p7-s42_iMejf8hJwVZuY5jnA954EM.eval": {
+    "eval_id": "TcJe7WKuGPFoA7UdCoZRdV",
+    "run_id": "chrEePqpVXjoapBU9a4fnV",
+    "task": "evalfrag_gsm8k_bare_t0p7_s42",
+    "task_id": "iMejf8hJwVZuY5jnA954EM",
+    "task_version": "1.0.0",
+    "version": 2,
+    "status": "success",
+    "invalidated": false,
+    "model": "anthropic/claude-haiku-4-5-20251001",
+    "started_at": "2026-08-18T22:43:11+00:00",
+    "completed_at": "2026-08-18T22:43:16+00:00",
+    "primary_metric": {
+      "name": "accuracy",
+      "value": 0.0,
+      "params": {}
+    }
+  }
+}
